@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kuis Bilangan Berpangkat</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      color: #243047;
+      margin: 0;
+      padding: 24px 14px;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 28px;
+      border-radius: 16px;
+      box-shadow: 0 4px 18px #00000012;
+    }
+
+    h1 { color: #2457a7; margin-top: 0; }
+    .intro { color: #526079; line-height: 1.6; }
+
+    .question {
+      padding: 18px 0;
+      border-bottom: 1px solid #e1e7ef;
+    }
+
+    .question h3 { margin-top: 0; }
+
+    label {
+      display: block;
+      padding: 10px;
+      margin: 7px 0;
+      border: 1px solid #d7deea;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    label:hover { background: #f1f6ff; }
+    input { margin-right: 8px; }
+
+    button {
+      background: #2457a7;
+      color: white;
+      border: 0;
+      padding: 12px 20px;
+      margin: 18px 8px 0 0;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover { background: #173f80; }
+    #result {
+      margin-top: 22px;
+      padding: 18px;
+      background: #eaf3ff;
+      border-radius: 10px;
+      display: none;
+      line-height: 1.7;
+    }
+
+    .correct { color: #187344; }
+    .wrong { color: #b42318; }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <h1>Kuis Bilangan Berpangkat</h1>
+    <p class="intro">
+      Uji pemahamanmu tentang bilangan berpangkat.
+      Jawablah 5 soal berikut, kemudian tekan tombol
+      <b>Periksa Jawaban</b> untuk melihat nilaimu.
+    </p>
+
+    <form id="quiz">
+      <div class="question">
+        <h3>1. Hasil dari 2³ adalah ...</h3>
+        <label><input type="radio" name="q1" value="a"> A. 6</label>
+        <label><input type="radio" name="q1" value="b"> B. 8</label>
+        <label><input type="radio" name="q1" value="c"> C. 9</label>
+        <label><input type="radio" name="q1" value="d"> D. 12</label>
+      </div>
+
+      <div class="question">
+        <h3>2. Bentuk perkalian berulang dari 5⁴ adalah ...</h3>
+        <label><input type="radio" name="q2" value="a"> A. 5 × 4</label>
+        <label><input type="radio" name="q2" value="b"> B. 4 × 4 × 4 × 4 × 4</label>
+        <label><input type="radio" name="q2" value="c"> C. 5 × 5 × 5 × 5</label>
+        <label><input type="radio" name="q2" value="d"> D. 5 + 5 + 5 + 5</label>
+      </div>
+
+      <div class="question">
+        <h3>3. Hasil dari 3² × 3³ adalah ...</h3>
+        <label><input type="radio" name="q3" value="a"> A. 3⁵ = 243</label>
+        <label><input type="radio" name="q3" value="b"> B. 3⁶ = 729</label>
+        <label><input type="radio" name="q3" value="c"> C. 6⁵ = 7776</label>
+        <label><input type="radio" name="q3" value="d"> D. 3¹ = 3</label>
+      </div>
+
+      <div class="question">
+        <h3>4. Hasil dari 2⁵ ÷ 2² adalah ...</h3>
+        <label><input type="radio" name="q4" value="a"> A. 2⁷ = 128</label>
+        <label><input type="radio" name="q4" value="b"> B. 2³ = 8</label>
+        <label><input type="radio" name="q4" value="c"> C. 2² = 4</label>
+        <label><input type="radio" name="q4" value="d"> D. 2¹⁰ = 1024</label>
+      </div>
+
+      <div class="question">
+        <h3>5. Hasil dari (2³)² adalah ...</h3>
+        <label><input type="radio" name="q5" value="a"> A. 2⁵ = 32</label>
+        <label><input type="radio" name="q5" value="b"> B. 2⁶ = 64</label>
+        <label><input type="radio" name="q5" value="c"> C. 2⁹ = 512</label>
+        <label><input type="radio" name="q5" value="d"> D. 2¹ = 2</label>
+      </div>
+
+      <button type="button" onclick="checkAnswers()">
+        Periksa Jawaban
+      </button>
+      <button type="reset" onclick="resetQuiz()">
+        Ulangi Kuis
+      </button>
+    </form>
+
+    <div id="result" aria-live="polite"></div>
+  </main>
+
+  <script>
+    function checkAnswers() {
+      const keys = {
+        q1: "b",
+        q2: "c",
+        q3: "a",
+        q4: "b",
+        q5: "b"
+      };
+
+      let score = 0;
+      let unanswered = 0;
+      let details = "";
+
+      for (let i = 1; i <= 5; i++) {
+        const selected = document.querySelector(
+          'input[name="q' + 'q' + i + '"]:checked'
+        );
+        const answer = document.querySelector(
+          'input[name="q' + i + '"]:checked'
+        );
+
+        if (!answer) {
+          unanswered++;
+          details += '<p class="wrong">Soal ' + i +
+            ': belum dijawab.</p>';
+        } else if (answer.value === keys["q" + i]) {
+          score++;
+          details += '<p class="correct">Soal ' + i +
+            ': benar!</p>';
+        } else {
+          details += '<p class="wrong">Soal ' + i +
+            ': belum tepat.</p>';
+        }
+      }
+
+      const result = document.getElementById("result");
+      result.style.display = "block";
+      result.innerHTML =
+        "<h2>Hasil Kuis</h2>" +
+        "<p><b>Nilai: " + (score * 20) + " dari 100</b></p>" +
+        "<p>Jawaban benar: " + score + " dari 5 soal</p>" +
+        details;
+
+      result.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function resetQuiz() {
+      document.getElementById("result").style.display = "none";
+    }
+  </script>
+</body>
+</html>
